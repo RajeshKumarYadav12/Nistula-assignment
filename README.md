@@ -2,8 +2,6 @@
 
 A production-ready backend system that receives inbound guest messages from multiple channels, normalises them into a unified schema, drafts contextual replies via the Claude AI API, and returns a confidence-scored response with a recommended action.
 
----
-
 ## Tech Stack
 
 | Layer       | Choice                                        | Why                                                         |
@@ -16,31 +14,29 @@ A production-ready backend system that receives inbound guest messages from mult
 | Security    | Helmet + express-rate-limit                   | Baseline protection for a public webhook endpoint           |
 | DB (schema) | PostgreSQL                                    | Best relational DB for structured messaging data at scale   |
 
----
-
 ## Project Structure
 
-```
 nistula-assessment/
 ├── src/
-│   ├── index.js                  # Express app entry point
-│   ├── routes/
-│   │   └── webhook.js            # POST /webhook/message handler
-│   ├── services/
-│   │   ├── normaliser.js         # Webhook payload → unified schema
-│   │   ├── classifier.js         # Rule-based query type classification
-│   │   ├── claudeService.js      # Claude API integration + prompt builder
-│   │   └── confidence.js         # Confidence score computation
-│   └── utils/
-│       ├── logger.js             # Winston logger
-│       └── propertyContext.js    # Mock property data store
-├── schema.sql                    # Part 2 — PostgreSQL schema
-├── thinking.md                   # Part 3 — Written answers
-├── .env.example                  # Environment variable template
+│ ├── index.js # Express app entry point
+│ ├── routes/
+│ │ └── webhook.js # POST /webhook/message handler
+│ ├── services/
+│ │ ├── normaliser.js # Webhook payload → unified schema
+│ │ ├── classifier.js # Rule-based query type classification
+│ │ ├── claudeService.js # Claude API integration + prompt builder
+│ │ └── confidence.js # Confidence score computation
+│ └── utils/
+│ ├── logger.js # Winston logger
+│ └── propertyContext.js # Mock property data store
+├── schema.sql # Part 2 — PostgreSQL schema
+├── thinking.md # Part 3 — Written answers
+├── .env.example # Environment variable template
 └── package.json
-```
 
----
+````
+
+
 
 ## Setup
 
@@ -59,16 +55,16 @@ npm install
 
 cp .env.example .env
 # Edit .env and add your ANTHROPIC_API_KEY
-```
+````
 
 ### Environment Variables
 
-```
-ANTHROPIC_API_KEY=sk-ant-api03-...   # Required
-PORT=3000                             # Optional, default 3000
-NODE_ENV=development                  # Optional
-RATE_LIMIT_MAX=100                    # Optional, requests per 15 min per IP
-```
+ANTHROPIC_API_KEY=sk-ant-api03-... # Required
+PORT=3000 # Optional, default 3000
+NODE_ENV=development # Optional
+RATE_LIMIT_MAX=100 # Optional, requests per 15 min per IP
+
+````
 
 ### Running the server
 
@@ -78,7 +74,7 @@ npm run dev
 
 # Production
 npm start
-```
+````
 
 ### Running tests
 
@@ -91,8 +87,6 @@ npm test
 # Or against a different URL:
 node src/test.js https://your-server.com
 ```
-
----
 
 ## API Reference
 
@@ -151,8 +145,6 @@ Accepts an inbound guest message and returns an AI-drafted reply with metadata.
 
 Returns `{ "status": "ok", "timestamp": "..." }`.
 
----
-
 ## Confidence Scoring Logic
 
 The confidence score (0–1) is a weighted average of four signals. It answers the question: _"How much should we trust this AI reply to be sent without human review?"_
@@ -161,8 +153,8 @@ The confidence score (0–1) is a weighted average of four signals. It answers t
 
 Measures how unambiguous the query classification was. The rule-based classifier scores every category; a clear winner (one category with 70%+ of total score) signals high clarity. A near-tie between categories (the guest asked something spanning multiple topics) signals low clarity.
 
-```
 clarity = max_score / total_score, normalised to [0, 1]
+
 ```
 
 ### Signal 2 — Context Completeness (30% weight)
@@ -176,7 +168,7 @@ Did we have rich property data to give Claude?
 
 A proxy for how difficult the message is to answer correctly:
 
-```
+
 complexity_score = 1 - (question_count - 1) * 0.1 - (word_count / 200)
 ```
 
@@ -196,11 +188,7 @@ Some channels provide more reliable identity verification than others:
 
 - **Complaints always escalate** — regardless of score, `query_type = complaint` forces `action = escalate` and `score = 0.40`. We never auto-send a reply to an unhappy guest.
 
----
-
 ## Query Classification
-
----
 
 ## Submission Checklist
 
@@ -212,8 +200,6 @@ This repository contains everything required by the Nistula technical assessment
 - [x] **thinking.md** — Written answers to all Part 3 questions
 - [x] **.env.example** — Template for required environment variables (no secrets)
 - [x] **test.js** — Manual integration tests for all query types and actions
-
----
 
 ## How to Submit
 
@@ -233,8 +219,6 @@ Classification is rule-based (no extra API call). Each category holds a list of 
 | `complaint`              | "The AC isn't working. This is unacceptable." |
 | `general_enquiry`        | "Do you allow pets? Is there parking?"        |
 
----
-
 ## Design Decisions & Trade-offs
 
 **Why local classification instead of a Claude call?**
@@ -246,8 +230,6 @@ The team is assessed on thinking, not framework preference. Node.js suits this u
 **Why not store messages to a database in this implementation?**
 To keep the assessment focused on the core pipeline. The schema.sql defines exactly how persistence would work. Adding a PostgreSQL connection is a straightforward next step using `pg` or `prisma`.
 
----
-
 ## What I'd Add With More Time
 
 1. **PostgreSQL persistence** — wire up the schema to actually store every message and reply
@@ -256,5 +238,3 @@ To keep the assessment focused on the core pipeline. The schema.sql defines exac
 4. **Async queue** — use a message queue (e.g. BullMQ + Redis) so the webhook returns immediately and Claude processing happens asynchronously
 5. **Fine-tuned classifier** — replace keyword matching with a small embedding model
 6. **Agent dashboard** — a simple UI to review and send `agent_review` messages
-#   N i s t u l a - a s s i g n m e n t  
- 
