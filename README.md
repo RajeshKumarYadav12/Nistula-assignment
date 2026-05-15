@@ -188,37 +188,6 @@ Some channels provide more reliable identity verification than others:
 
 - **Complaints always escalate** — regardless of score, `query_type = complaint` forces `action = escalate` and `score = 0.40`. We never auto-send a reply to an unhappy guest.
 
-## Query Classification
-
-## Submission Checklist
-
-This repository contains everything required by the Nistula technical assessment brief:
-
-- [x] **README.md** — Setup, API docs, confidence scoring logic, and checklist
-- [x] **/src** — All backend code (webhook, normaliser, classifier, Claude integration, confidence, utils)
-- [x] **schema.sql** — PostgreSQL schema with comments and design rationale
-- [x] **thinking.md** — Written answers to all Part 3 questions
-- [x] **.env.example** — Template for required environment variables (no secrets)
-- [x] **test.js** — Manual integration tests for all query types and actions
-
-## How to Submit
-
-1. Push this repository to GitHub as `nistula-technical-assessment` (public)
-2. Double-check `.env` is **not** committed (see `.gitignore`)
-3. Reply to the assessment email with your GitHub repo link
-4. Done!
-
-Classification is rule-based (no extra API call). Each category holds a list of keyword signals; the category with the highest cumulative hit count wins. Complaints get a 2× weight multiplier to ensure they're never missed.
-
-| Query Type               | Example                                       |
-| ------------------------ | --------------------------------------------- |
-| `pre_sales_availability` | "Is the villa free April 20–24?"              |
-| `pre_sales_pricing`      | "What's the rate for 2 adults 3 nights?"      |
-| `post_sales_checkin`     | "What time can we check in? What's the WiFi?" |
-| `special_request`        | "Can you arrange a birthday cake and chef?"   |
-| `complaint`              | "The AC isn't working. This is unacceptable." |
-| `general_enquiry`        | "Do you allow pets? Is there parking?"        |
-
 ## Design Decisions & Trade-offs
 
 **Why local classification instead of a Claude call?**
