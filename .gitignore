@@ -1,0 +1,29 @@
+# Ignore environment files
+.env
+.env.*
+
+# Node modules
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Misc
+*.swp
+*.swo
+
+# Build
+/dist
+/build
+
+# Test output
+coverage/
+
+# VSCode
+.vscode/
